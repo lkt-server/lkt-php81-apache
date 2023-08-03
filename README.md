@@ -8,6 +8,7 @@ A pre-configured docker file, so you can have an apache php 7.3 server working i
 - Zip
 - Intl
 - LDAP
+- IMAP
 
 ## Installation
 Simply clone this repo.

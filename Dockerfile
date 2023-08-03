@@ -27,6 +27,11 @@ RUN set -eux; apt-get update; apt-get install -y libzip-dev zlib1g-dev; docker-p
 # Add MariaDB client
 RUN apt-get install -y mariadb-client
 
+# Add IMAP support
+RUN apt-get update && apt-get install -y libc-client-dev libkrb5-dev && rm -r /var/lib/apt/lists/*
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
 # Add intl support
 RUN apt-get -y update; apt-get install -y libicu-dev; docker-php-ext-configure intl; docker-php-ext-install intl
 
