@@ -3,12 +3,16 @@
 A pre-configured docker file, so you can have an apache php 7.3 server working in just five minutes.
 
 ## Included configuration:
-- Apache2 mod_rewrite
+- Apache2 mods: rewrite, deflate, ssl
 - PDO, PDO MySQL, mysqli, mariadb-client
 - Zip
 - Intl
 - LDAP
 - IMAP
+- XML
+- GD
+- Imagick
+- Composer
 
 ## Installation
 Simply clone this repo.
@@ -18,6 +22,9 @@ Move to this directory and type in a terminal:
 
 ```shell
 sudo docker build -t lkt-php81-apache:latest .
+
+# Force clean composer install
+sudo docker build --no-cache -t lkt-php81-apache:latest .
 ```
 
 ## Launch a container
@@ -38,4 +45,10 @@ sudo docker stop lkt-php81-apache
 ## Remove
 ```shell
 sudo docker rm lkt-php81-apache
+```
+
+## Run composer commands
+```bash
+sudo docker exec -t lkt-php81-apache composer
+sudo docker exec -t lkt-php81-apache composer update
 ```

@@ -8,7 +8,12 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Enable mod rewrite
 RUN a2enmod rewrite ssl
 
-# Enable PHP extensions for databases
+# Enable mod deflate
+RUN a2enmod deflate
+RUN sed -ri -e 's|</VirtualHost>|<Directory ${APACHE_DOCUMENT_ROOT}>\n SetOutputFilter Deflate\n</Directory>\n</VirtualHost>|g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's|</VirtualHost>|<Directory ${APACHE_DOCUMENT_ROOT}>\n SetOutputFilter Deflate\n</Directory>\n</VirtualHost>|g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# PDO and MySQL installation
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # LDAP Installation
@@ -35,6 +40,24 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 # Add intl support
 RUN apt-get -y update; apt-get install -y libicu-dev; docker-php-ext-configure intl; docker-php-ext-install intl
 
+# Add gd support
+RUN apt-get install -y libpng16-16 libpng-tools
+RUN apt-get update && apt-get install -y libpng-dev libjpeg62-turbo-dev libfreetype6-dev jpegoptim optipng pngquant gifsicle
+RUN apt-get update && apt-get install -y --no-install-recommends libmagickwand-dev
+RUN pecl install imagick && docker-php-ext-enable imagick
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* || true
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && docker-php-ext-install gd
+
+# Add XML support
+RUN apt install -y libxml2-dev && docker-php-ext-install xml
+
+# Add composer support
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN mv composer.phar /usr/local/bin/composer
+
 # Generates server info files
-RUN echo "<?php phpinfo(); ?>" > /var/www/html/info.php\
-    && php -m > /var/www/html/php1.html
+RUN echo "<?php phpinfo(); ?>" > /var/www/html/info.php && php -m > /var/www/html/php1.html
