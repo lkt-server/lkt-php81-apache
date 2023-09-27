@@ -13,6 +13,7 @@ A pre-configured docker file, so you can have an apache php 7.3 server working i
 - GD
 - Imagick
 - Composer
+- Optional SSL config
 
 ## Installation
 Simply clone this repo.

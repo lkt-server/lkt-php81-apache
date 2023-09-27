@@ -59,5 +59,11 @@ RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
 
+# Configure SSL
+RUN mkdir -p /etc/apache2/ssl
+COPY certs/*.pem /etc/apache2/ssl/
+COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+RUN a2ensite default-ssl
+
 # Generates server info files
 RUN echo "<?php phpinfo(); ?>" > /var/www/html/info.php && php -m > /var/www/html/php1.html
