@@ -27,7 +27,7 @@ RUN apt-get update \
 RUN usermod -u 431 www-data
 
 # Add zip support
-RUN set -eux; apt-get update; apt-get install -y libzip-dev zlib1g-dev; docker-php-ext-install zip
+RUN set -eux; apt-get update; apt-get install -y libzip-dev zlib1g-dev; apt-get install -y unzip; docker-php-ext-install zip
 
 # Add MariaDB client
 RUN apt-get install -y mariadb-client
