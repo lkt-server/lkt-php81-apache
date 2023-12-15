@@ -1,6 +1,6 @@
 # LKT PHP 8.1 Apache
 
-A pre-configured docker file, so you can have an apache php 7.3 server working in just five minutes.
+A pre-configured docker file, so you can have an apache php 8.1 server working in just five minutes.
 
 ## Included configuration:
 - Apache2 mods: rewrite, deflate, ssl
